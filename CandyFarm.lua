@@ -1,0 +1,489 @@
+
+--// Candy Farm | Hamster - Youssef
+
+local Players = game:GetService("Players")
+local UIS = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+
+local player = Players.LocalPlayer
+local folder = workspace:WaitForChild("CandyCorns")
+local playerGui = player:WaitForChild("PlayerGui")
+
+-- Remove old GUI
+local old = playerGui:FindFirstChild("CandyFarm")
+if old then
+    old:Destroy()
+end
+
+-- Colors
+local purple = Color3.fromRGB(155, 90, 255)
+local background = Color3.fromRGB(18, 18, 27)
+local panel = Color3.fromRGB(29, 29, 43)
+local white = Color3.fromRGB(245, 245, 255)
+local green = Color3.fromRGB(45, 175, 110)
+local red = Color3.fromRGB(210, 65, 80)
+
+-- Helpers
+local function make(class, props, parent)
+    local obj = Instance.new(class)
+
+    for key, value in pairs(props) do
+        obj[key] = value
+    end
+
+    obj.Parent = parent
+    return obj
+end
+
+local function round(obj, radius)
+    make("UICorner", {
+        CornerRadius = UDim.new(0, radius)
+    }, obj)
+end
+
+local function stroke(obj, color, thickness)
+    make("UIStroke", {
+        Color = color,
+        Thickness = thickness or 1.5,
+        Transparency = 0.15
+    }, obj)
+end
+
+-- ScreenGui
+local gui = make("ScreenGui", {
+    Name = "CandyFarm",
+    ResetOnSpawn = false,
+    IgnoreGuiInset = true,
+    ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+}, playerGui)
+
+-- Intro
+local intro = make("Frame", {
+    Size = UDim2.fromOffset(430, 190),
+    Position = UDim2.new(0.5, -215, 0.5, -95),
+    BackgroundColor3 = background,
+    BackgroundTransparency = 1
+}, gui)
+
+round(intro, 16)
+stroke(intro, purple, 2)
+
+local introTitle = make("TextLabel", {
+    Size = UDim2.new(1, 0, 0, 75),
+    Position = UDim2.fromOffset(0, 35),
+    BackgroundTransparency = 1,
+    Text = "CANDY FARM",
+    TextColor3 = white,
+    TextTransparency = 1,
+    Font = Enum.Font.GothamBlack,
+    TextSize = 35
+}, intro)
+
+local introSub = make("TextLabel", {
+    Size = UDim2.new(1, 0, 0, 35),
+    Position = UDim2.fromOffset(0, 105),
+    BackgroundTransparency = 1,
+    Text = "Hamster - Youssef",
+    TextColor3 = purple,
+    TextTransparency = 1,
+    Font = Enum.Font.GothamBold,
+    TextSize = 18
+}, intro)
+
+TweenService:Create(intro, TweenInfo.new(0.5), {
+    BackgroundTransparency = 0
+}):Play()
+
+TweenService:Create(introTitle, TweenInfo.new(0.7), {
+    TextTransparency = 0
+}):Play()
+
+TweenService:Create(introSub, TweenInfo.new(0.9), {
+    TextTransparency = 0
+}):Play()
+
+-- Main window
+local main = make("Frame", {
+    Name = "Main",
+    Size = UDim2.fromOffset(650, 460),
+    Position = UDim2.new(0.5, -325, 0.5, -230),
+    BackgroundColor3 = background,
+    Visible = false,
+    Active = true
+}, gui)
+
+round(main, 14)
+stroke(main, purple, 2)
+
+-- Header
+local header = make("Frame", {
+    Name = "Header",
+    Size = UDim2.new(1, 0, 0, 76),
+    BackgroundColor3 = panel,
+    Active = true
+}, main)
+
+round(header, 14)
+
+local titleLabel = make("TextLabel", {
+    Size = UDim2.new(1, -220, 0, 35),
+    Position = UDim2.fromOffset(20, 8),
+    BackgroundTransparency = 1,
+    Text = "Hamster's Scripts",
+    TextColor3 = white,
+    TextXAlignment = Enum.TextXAlignment.Left,
+    Font = Enum.Font.GothamBold,
+    TextSize = 24,
+    Active = true
+}, header)
+
+local subtitleLabel = make("TextLabel", {
+    Size = UDim2.new(1, -220, 0, 22),
+    Position = UDim2.fromOffset(20, 43),
+    BackgroundTransparency = 1,
+    Text = "Candy Farm | Hamster - Youssef",
+    TextColor3 = Color3.fromRGB(166, 158, 190),
+    TextXAlignment = Enum.TextXAlignment.Left,
+    Font = Enum.Font.Gotham,
+    TextSize = 12,
+    Active = true
+}, header)
+
+-- Auto button
+local autoButton = make("TextButton", {
+    Name = "AutoButton",
+    Size = UDim2.fromOffset(95, 38),
+    Position = UDim2.new(1, -155, 0, 20),
+    BackgroundColor3 = Color3.fromRGB(65, 65, 80),
+    Text = "AUTO: OFF",
+    TextColor3 = white,
+    Font = Enum.Font.GothamBold,
+    TextSize = 13
+}, header)
+
+round(autoButton, 8)
+
+-- Close button
+local closeButton = make("TextButton", {
+    Name = "CloseButton",
+    Size = UDim2.fromOffset(32, 32),
+    Position = UDim2.new(1, -48, 0, 23),
+    BackgroundColor3 = red,
+    Text = "×",
+    TextColor3 = white,
+    Font = Enum.Font.GothamBold,
+    TextSize = 25,
+    AutoButtonColor = true
+}, header)
+
+round(closeButton, 8)
+
+-- Reopen button
+local reopenButton = make("TextButton", {
+    Name = "ReopenButton",
+    Size = UDim2.fromOffset(165, 46),
+    Position = UDim2.new(0, 20, 0.5, -23),
+    BackgroundColor3 = panel,
+    Text = "Candy Farm",
+    TextColor3 = white,
+    Font = Enum.Font.GothamBold,
+    TextSize = 16,
+    Visible = false
+}, gui)
+
+round(reopenButton, 10)
+stroke(reopenButton, purple, 2)
+
+-- Status
+local status = make("TextLabel", {
+    Name = "Status",
+    Size = UDim2.new(1, -40, 0, 28),
+    Position = UDim2.fromOffset(20, 85),
+    BackgroundTransparency = 1,
+    Text = "Candy available: 0",
+    TextColor3 = Color3.fromRGB(185, 180, 205),
+    TextXAlignment = Enum.TextXAlignment.Left,
+    Font = Enum.Font.Gotham,
+    TextSize = 14
+}, main)
+
+-- Candy list
+local scroll = make("ScrollingFrame", {
+    Name = "CandyList",
+    Size = UDim2.new(1, -32, 1, -130),
+    Position = UDim2.fromOffset(16, 118),
+    BackgroundColor3 = panel,
+    BorderSizePixel = 0,
+    ScrollBarThickness = 6,
+    ScrollBarImageColor3 = purple,
+    CanvasSize = UDim2.new(0, 0, 0, 0),
+    AutomaticCanvasSize = Enum.AutomaticSize.Y
+}, main)
+
+round(scroll, 10)
+
+make("UIPadding", {
+    PaddingTop = UDim.new(0, 10),
+    PaddingBottom = UDim.new(0, 10),
+    PaddingLeft = UDim.new(0, 10),
+    PaddingRight = UDim.new(0, 10)
+}, scroll)
+
+make("UIListLayout", {
+    Padding = UDim.new(0, 8),
+    SortOrder = Enum.SortOrder.LayoutOrder
+}, scroll)
+
+-- Close and reopen
+closeButton.Activated:Connect(function()
+    main.Visible = false
+    reopenButton.Visible = true
+end)
+
+reopenButton.Activated:Connect(function()
+    main.Visible = true
+    reopenButton.Visible = false
+end)
+
+-- Drag GUI with mouse or touch
+local dragging = false
+local dragStart
+local startPosition
+
+local function beginDrag(input)
+    if input.UserInputType ~= Enum.UserInputType.MouseButton1
+        and input.UserInputType ~= Enum.UserInputType.Touch then
+        return
+    end
+
+    dragging = true
+    dragStart = input.Position
+    startPosition = main.Position
+
+    input.Changed:Connect(function()
+        if input.UserInputState == Enum.UserInputState.End then
+            dragging = false
+        end
+    end)
+end
+
+-- Drag from header or title area
+header.InputBegan:Connect(beginDrag)
+titleLabel.InputBegan:Connect(beginDrag)
+subtitleLabel.InputBegan:Connect(beginDrag)
+
+UIS.InputChanged:Connect(function(input)
+    if not dragging then
+        return
+    end
+
+    if input.UserInputType == Enum.UserInputType.MouseMovement
+        or input.UserInputType == Enum.UserInputType.Touch then
+
+        local delta = input.Position - dragStart
+
+        main.Position = UDim2.new(
+            startPosition.X.Scale,
+            startPosition.X.Offset + delta.X,
+            startPosition.Y.Scale,
+            startPosition.Y.Offset + delta.Y
+        )
+    end
+end)
+
+-- Candy actions
+local autoEnabled = false
+local busy = {}
+local rows = {}
+
+local function getTarget(item)
+    if item:IsA("BasePart") then
+        return item
+    elseif item:IsA("Model") then
+        return item.PrimaryPart
+            or item:FindFirstChildWhichIsA("BasePart", true)
+    end
+
+    return nil
+end
+
+local function collect(item)
+    if busy[item] or not item:IsDescendantOf(folder) then
+        return
+    end
+
+    local target = getTarget(item)
+    if not target then
+        return
+    end
+
+    -- Executor-only function, not available in a normal LocalScript.
+    local touchFunction = firetouchinterest
+
+    if typeof(touchFunction) ~= "function" then
+        status.Text = "Touch simulation unavailable"
+        return
+    end
+
+    local character = player.Character
+    local root = character and character:FindFirstChild("HumanoidRootPart")
+
+    if not root then
+        status.Text = "Character not ready"
+        return
+    end
+
+    busy[item] = true
+
+    task.spawn(function()
+        local ok = pcall(function()
+            touchFunction(root, target, 0)
+            task.wait(0.1)
+            touchFunction(root, target, 1)
+        end)
+
+        if not ok then
+            status.Text = "Touch attempt failed"
+        end
+
+        task.wait(0.5)
+        busy[item] = nil
+    end)
+end
+
+-- Refresh list
+local function refresh()
+    for _, row in ipairs(rows) do
+        row:Destroy()
+    end
+
+    table.clear(rows)
+
+    local items = folder:GetChildren()
+    table.sort(items, function(a, b)
+        return a.Name:lower() < b.Name:lower()
+    end)
+
+    local count = 0
+
+    for _, item in ipairs(items) do
+        if getTarget(item) then
+            count += 1
+        end
+    end
+
+    status.Text = "Candy available: " .. count
+
+    for index, item in ipairs(items) do
+        if not getTarget(item) then
+            continue
+        end
+
+        local row = make("Frame", {
+            Name = string.format("%04d", index),
+            LayoutOrder = index,
+            Size = UDim2.new(1, -4, 0, 48),
+            BackgroundColor3 = background
+        }, scroll)
+
+        round(row, 8)
+        table.insert(rows, row)
+
+        make("TextLabel", {
+            Size = UDim2.new(1, -125, 1, 0),
+            Position = UDim2.fromOffset(12, 0),
+            BackgroundTransparency = 1,
+            Text = item.Name,
+            TextColor3 = white,
+            TextXAlignment = Enum.TextXAlignment.Left,
+            Font = Enum.Font.GothamMedium,
+            TextSize = 14,
+            TextTruncate = Enum.TextTruncate.AtEnd
+        }, row)
+
+        local button = make("TextButton", {
+            Name = "CollectButton",
+            Size = UDim2.fromOffset(90, 32),
+            Position = UDim2.new(1, -100, 0.5, -16),
+            BackgroundColor3 = purple,
+            Text = "Collect",
+            TextColor3 = white,
+            Font = Enum.Font.GothamBold,
+            TextSize = 13
+        }, row)
+
+        round(button, 7)
+
+        button.Activated:Connect(function()
+            collect(item)
+        end)
+    end
+end
+
+-- Auto toggle
+autoButton.Activated:Connect(function()
+    autoEnabled = not autoEnabled
+
+    autoButton.Text = autoEnabled and "AUTO: ON" or "AUTO: OFF"
+    autoButton.BackgroundColor3 = autoEnabled
+        and green
+        or Color3.fromRGB(65, 65, 80)
+
+    if autoEnabled then
+        status.Text = "Auto enabled"
+
+        for _, item in ipairs(folder:GetChildren()) do
+            collect(item)
+        end
+    else
+        status.Text = "Auto disabled"
+    end
+end)
+
+-- Update when candies are added or removed
+folder.ChildAdded:Connect(function(item)
+    task.wait(0.1)
+    refresh()
+
+    if autoEnabled then
+        collect(item)
+    end
+end)
+
+folder.ChildRemoved:Connect(function()
+    task.defer(refresh)
+end)
+
+-- Initial refresh
+refresh()
+
+-- Intro animation
+task.wait(2)
+
+TweenService:Create(intro, TweenInfo.new(0.4), {
+    Position = UDim2.new(0.5, -215, 0.5, -125),
+    BackgroundTransparency = 1
+}):Play()
+
+TweenService:Create(introTitle, TweenInfo.new(0.3), {
+    TextTransparency = 1
+}):Play()
+
+TweenService:Create(introSub, TweenInfo.new(0.3), {
+    TextTransparency = 1
+}):Play()
+
+task.wait(0.45)
+
+intro:Destroy()
+main.Visible = true
+
+main.Size = UDim2.fromOffset(610, 430)
+
+TweenService:Create(main, TweenInfo.new(
+    0.35,
+    Enum.EasingStyle.Back,
+    Enum.EasingDirection.Out
+), {
+    Size = UDim2.fromOffset(650, 460)
+}):Play()
