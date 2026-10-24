@@ -114,7 +114,49 @@ local main = make("Frame", {
 
 round(main, 14)
 stroke(main, purple, 2)
+-- Safe Mode Button
+local safeButton = Instance.new("TextButton")
+safeButton.Name = "SafeModeButton"
+safeButton.Size = UDim2.new(0, 100, 0, 35)
+safeButton.Position = UDim2.new(1, -265, 0, 20)
+safeButton.BackgroundColor3 = Color3.fromRGB(100, 70, 200)
+safeButton.Text = "Safe Mode"
+safeButton.TextColor3 = Color3.new(1, 1, 1)
+safeButton.TextSize = 14
+safeButton.Font = Enum.Font.GothamBold
+safeButton.Parent = mainFrame
 
+Instance.new("UICorner", safeButton).CornerRadius =
+    UDim.new(0, 8)
+
+local safePlatform
+
+safeButton.Activated:Connect(function()
+    local character = player.Character
+        or player.CharacterAdded:Wait()
+
+    local root = character:WaitForChild("HumanoidRootPart")
+
+    -- Create a platform far away
+    if safePlatform then
+        safePlatform:Destroy()
+    end
+
+    safePlatform = Instance.new("Part")
+    safePlatform.Name = "SafeModePlatform"
+    safePlatform.Size = Vector3.new(100, 2, 100)
+    safePlatform.Anchored = true
+    safePlatform.CanCollide = true
+    safePlatform.Material = Enum.Material.Neon
+    safePlatform.Color = Color3.fromRGB(130, 90, 255)
+
+    local destination = root.Position + Vector3.new(10000, 500, 0)
+    safePlatform.Position = destination
+    safePlatform.Parent = workspace
+
+    -- Teleport above the platform
+    root.CFrame = CFrame.new(destination + Vector3.new(0, 5, 0))
+end)
 -- Header
 local header = make("Frame", {
     Name = "Header",
